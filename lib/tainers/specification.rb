@@ -72,7 +72,7 @@ module Tainers
 
     def self.create_or_conflict params
       begin
-        Docker::Container.create(params)
+        Docker::Container.create(params.dup)
         return true
       rescue Excon::Errors::Conflict
         return true
