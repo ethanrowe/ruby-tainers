@@ -80,4 +80,27 @@ module Tainers
       false
     end
   end
+
+  def self.specify args={}
+    Specification.new named_parameters_for(args)
+  end
+
+  def self.named_parameters_for params
+    p = params.dup
+    prefix = p.delete('prefix')
+    prefix = if prefix.nil? || prefix == ''
+               'Tainers'
+             else
+               prefix.downcase
+             end
+    suffix = p.delete('suffix')
+    suffix = if suffix.nil?
+               ''
+             else
+               "-#{suffix.downcase}"
+             end
+    digest = hash(p)
+    p['name'] = "#{prefix}-#{digest}#{suffix}"
+    p
+  end
 end
