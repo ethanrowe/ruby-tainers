@@ -35,6 +35,19 @@ module Tainers
         opts.on('-s SUFFIX', '--suffix SUFFIX', String, "Use SUFFIX as container name suffix (overriding whatever is in spec)") do |s|
           options['suffix'] = s
         end
+
+        opts.on('-h', '--help') do
+          print opts
+          exit 0
+        end
+
+        opts.separator ""
+        opts.separator "Commands:"
+        Command.commands.each do |name, help|
+          opts.separator ""
+          opts.separator "    #{name}"
+          opts.separator "          #{help}" if help.size > 0
+        end
       end
 
       # Stop on first non-option param
@@ -72,9 +85,25 @@ module Tainers
         @specification = Tainers.specify(spec)
       end
 
+      def self.commands
+        cmds = instance_methods.collect {|m| m.to_s}.find_all {|m| m.to_s =~ /_command$/}.collect {|n| n.to_s[0..-9] }
+        cmds.collect do |name|
+          helper = "#{name}_help".to_sym
+          if respond_to? helper
+            [name, send(helper)]
+          else
+            [name, '']
+          end
+        end
+      end
+
       def ensure_command
         return 0 if specification.ensure
         255
+      end
+
+      def self.ensure_help
+        "Ensures specified container exists, by name."
       end
 
       def exists_command
@@ -82,9 +111,17 @@ module Tainers
         1
       end
 
+      def self.exists_help
+        "Exits with 0 (true) if specified container exists, by name; 1 (false) if not."
+      end
+
       def name_command
         STDOUT.print "#{specification.name}\n"
         0
+      end
+
+      def self.name_help
+        "Prints the specified container's name on stdout."
       end
     end
   end
