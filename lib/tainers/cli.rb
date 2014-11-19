@@ -76,6 +76,16 @@ module Tainers
         return 0 if specification.ensure
         255
       end
+
+      def exists_command
+        return 0 if specification.exists
+        1
+      end
+
+      def name_command
+        STDOUT.print "#{specification.name}\n"
+        0
+      end
     end
   end
 end
