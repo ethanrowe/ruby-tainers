@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+# vim: set filetype=ruby:
+
+require 'tainers'
+
+exit Tainers::CLI.run(ARGV)
