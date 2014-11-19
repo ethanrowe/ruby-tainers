@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.version     = '0.0.1'
   s.email       = 'ethan@the-rowes.com'
   s.author      = 'Ethan Rowe'
-  s.date        = '2014-11-18'
+  s.date        = '2014-11-19'
   s.platform    = Gem::Platform::RUBY
   s.description = 'Config-driven management of docker containers'
   s.summary     = 'Manage docker containers based on deterministic naming derived from container configuration'
