@@ -78,7 +78,7 @@ module Tainers
       end
 
       def exists_command
-        return 0 if specification.exists
+        return 0 if specification.exists?
         1
       end
 

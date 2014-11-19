@@ -6,12 +6,12 @@ shared_examples_for 'exists command' do
   end
 
   it 'returns 0 for an existing container' do
-    expect(specification).to receive(:exists).with(no_args).and_return(true)
+    expect(specification).to receive(:exists?).with(no_args).and_return(true)
     expect(command_run).to eq(0)
   end
 
   it 'returns 1 for a non-existent container' do
-    expect(specification).to receive(:exists).with(no_args).and_return(false)
+    expect(specification).to receive(:exists?).with(no_args).and_return(false)
     expect(command_run).to eq(1)
   end
 end
