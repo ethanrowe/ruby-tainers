@@ -3,6 +3,8 @@ ruby-tainers
 
 A helper for managing docker containers (hence 'tainers)
 
+[![Build Status](https://travis-ci.org/ethanrowe/ruby-tainers.svg)](https://travis-ci.org/ethanrowe/ruby-tainers)
+
 # Concept
 
 Suppose you want to assemble docker containers (applying configuration to code) in a manner such that:
