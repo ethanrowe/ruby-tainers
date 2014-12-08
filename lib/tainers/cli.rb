@@ -97,6 +97,15 @@ module Tainers
         end
       end
 
+      def create_command
+        return 0 if specification.create
+        1
+      end
+
+      def self.create_help
+        "Creates specified container, if it doesn't already exist; exits with 0 on creation, 1 if already exists."
+      end
+
       def ensure_command
         return 0 if specification.ensure
         255
