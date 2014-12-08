@@ -40,6 +40,28 @@ module Tainers
       return nil
     end
 
+    # Creates the container named by this specification, if it does
+    # not already exist.
+    #
+    # Returns true (self, actually) if the invocation resulted in the
+    # creation of a new container; false otherwise.
+    #
+    # A false condition could result from:
+    # - The container already existing
+    # - The container being simultaneously created by another
+    #   actor, with your invocation losing the race.
+    # 
+    # A failure to create due to operational or semantic issues
+    # should result in an exception.  Therefore, any non-exceptional
+    # case should mean that a container of the expected name exists,
+    # though in the false result case there is no firm guarantee
+    # that the existing container has the requested configuration e.
+    def create
+      return false if exists?
+      return self if Tainers::API.create(@args)
+      false
+    end
+
     # The name of the container described by this specification.
     def name
       @args['name']
@@ -70,14 +92,18 @@ module Tainers
       end
     end
 
-    def self.create_or_conflict params
+    def self.create params
       begin
         Docker::Container.create(params.dup)
         return true
       rescue Excon::Errors::Conflict
-        return true
+        return false
       end
-      false
+    end
+
+    def self.create_or_conflict params
+      create params
+      true
     end
   end
 

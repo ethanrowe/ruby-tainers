@@ -1,5 +1,27 @@
 require 'rspec_helper'
 
+shared_examples_for 'container creator' do
+  before do
+    expect(subject).to receive(:exists?).and_return(false)
+  end
+
+  it 'uses Docker::Container for creation' do
+    expect(Docker::Container).to receive(:create).with(specification_args).and_return(container = double)
+    expect(creation_operation).to be(subject)
+  end
+
+  it 'is okay with a conflict result' do
+    expect(Docker::Container).to receive(:create).with(specification_args).and_raise(Excon::Errors::Conflict, "Pickles")
+    expect(creation_operation).to be(expected_conflict_result)
+  end
+
+  it 'does not handle other exceptions' do
+    expect(Docker::Container).to receive(:create).with(specification_args).and_raise(Exception, "You suck.")
+    expect { creation_operation }.to raise_error("You suck.")
+  end
+end
+
+
 RSpec.describe Tainers::Specification do
   it 'requires a name' do
     expect { Tainers::Specification.new 'Image' => 'foo/image:latest' }.to raise_error(/name is required/)
@@ -26,24 +48,17 @@ RSpec.describe Tainers::Specification do
       end
 
       context '#ensure' do
-        before do
-          expect(subject).to receive(:exists?).and_return(false)
-        end
+        let(:expected_conflict_result) { subject }
+        let(:creation_operation) { subject.ensure }
 
-        it 'uses Docker::Container for creation' do
-          expect(Docker::Container).to receive(:create).with(specification_args).and_return(container = double)
-          expect(subject.ensure).to be(subject)
-        end
+        it_behaves_like 'container creator'
+      end
 
-        it 'is okay with a conflict result' do
-          expect(Docker::Container).to receive(:create).with(specification_args).and_raise(Excon::Errors::Conflict, "Pickles")
-          expect(subject.ensure).to be(subject)
-        end
+      context '#create' do
+        let(:expected_conflict_result) { false }
+        let(:creation_operation) { subject.create }
 
-        it 'does not handle other exceptions' do
-          expect(Docker::Container).to receive(:create).with(specification_args).and_raise(Exception, "You suck.")
-          expect { subject.ensure }.to raise_error("You suck.")
-        end
+        it_behaves_like 'container creator'
       end
     end
 
@@ -57,6 +72,12 @@ RSpec.describe Tainers::Specification do
         expect(subject).to receive(:exists?).and_return(true)
         expect(Docker::Container).to receive(:create).never
         expect(subject.ensure).to be(subject)
+      end
+
+      it 'does a no-op for #create' do
+        expect(subject).to receive(:exists?).and_return(true)
+        expect(Docker::Container).to receive(:create).never
+        expect(subject.create).to be(false)
       end
     end
   end
