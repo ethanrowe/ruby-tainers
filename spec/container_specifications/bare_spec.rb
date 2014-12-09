@@ -41,6 +41,14 @@ RSpec.describe Tainers::Specification::Bare do
       Tainers::Specification::Bare.new specification_args
     end
 
+    it 'has a name' do
+      expect(subject.name).to equal(name)
+    end
+
+    it 'has an image' do
+      expect(subject.image).to equal(image)
+    end
+
     context 'that does not exist' do
       it 'indicates non-existence' do
         expect(Docker::Container).to receive(:get).with(name).and_raise(Docker::Error::NotFoundError)

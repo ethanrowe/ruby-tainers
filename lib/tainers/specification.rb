@@ -68,6 +68,13 @@ module Tainers
         @args['name']
       end
 
+      # The image of the container described by this specification.
+      # Note that this is a string (a tag or image ID) and not a more
+      # complex object.
+      def image
+        @args['Image']
+      end
+
       # True if the container of the appropriate name already exists.  False if not.
       def exists?
         ! Tainers::API.get_by_name(name).nil?
@@ -83,9 +90,77 @@ module Tainers
         ! (image.nil? or image == '')
       end
     end # class Bare
+
+    module Delegator
+      def self.delegates(method_name)
+        method_name = method_name.to_sym
+        define_method(method_name) do |*args|
+          chain.send(method_name, *args)
+        end
+      end
+
+      def initialize(chain)
+        @chain = chain
+      end
+
+      attr_reader :chain
+
+      delegates :create
+      delegates :ensure
+      delegates :exists?
+      delegates :name
+    end
+
+    # Tainer specification that automatically pulls the image
+    # as needed prior to container creation operations.
+    #
+    # Wrap it around a bare specification to use it:
+    #
+    #     t1 = Tainers::Specification::Bare.new('Image' =>' foo')
+    #     t2 = Tainers::Specification::ImagePuller.new(t1)
+    #     # This doesn't pull image "foo"
+    #     t1.ensure
+    #     # But this will, if necessary
+    #     t2.ensure
+    #
+    # Note that the #ensure and #create methods have the pulling
+    # behavior; no others do.
+    class ImagePuller
+      include Delegator
+
+      def self.ensure_image(image)
+        if ! Tainers::API.image_exists?(image)
+          Tainers::API.pull_image image
+        end
+        true
+      end
+
+      def self.pulls_and_delegates(method_name)
+        method_name = method_name.to_sym
+        define_method(method_name) do |*args|
+          self.class.ensure_image(chain.image)
+          chain.send(method_name, *args)
+        end
+      end
+      
+      pulls_and_delegates :create
+      pulls_and_delegates :ensure
+    end
   end # module Specification
 
   module API
+    def self.image_exists? name
+      begin
+        return true if Docker::Image.get(name)
+      rescue Docker::Error::NotFoundError
+        return false
+      end
+    end
+
+    def self.pull_image name
+      Docker::Image.create(name)
+    end
+
     def self.get_by_name name
       begin
         Docker::Container.get(name)
@@ -109,8 +184,18 @@ module Tainers
     end
   end # module API
 
+  # Returns an image-pulling container specification
+  # from the given parameters.
+  #
+  # Enforces the naming conventions such that the
+  # name for the container will have prefix, suffix,
+  # and spec-derived hash as documented elsewhere.
+  #
+  # The result will be an instance of Tainers::Specification::ImagePuller.
   def self.specify args={}
-    Specification::Bare.new named_parameters_for(args)
+    Specification::ImagePuller.new(
+      Specification::Bare.new named_parameters_for(args)
+    )
   end
 
   def self.named_parameters_for params
