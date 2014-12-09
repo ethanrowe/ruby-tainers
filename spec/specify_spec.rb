@@ -3,7 +3,7 @@ require 'rspec_helper'
 shared_examples_for 'a named specification' do
   it 'produces a deterministically named specification' do
     expect(Tainers).to receive(:hash).with(base_args.dup).and_return(hash)
-    expect(Tainers::Specification).to receive(:new).with(base_args.dup.update('name' => name)).and_return(s = double)
+    expect(Tainers::Specification::Bare).to receive(:new).with(base_args.dup.update('name' => name)).and_return(s = double)
     expect(Tainers.specify specify_args).to eq(s)
   end
 end
