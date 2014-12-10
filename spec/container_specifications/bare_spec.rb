@@ -22,13 +22,13 @@ shared_examples_for 'container creator' do
 end
 
 
-RSpec.describe Tainers::Specification do
+RSpec.describe Tainers::Specification::Bare do
   it 'requires a name' do
-    expect { Tainers::Specification.new 'Image' => 'foo/image:latest' }.to raise_error(/name is required/)
+    expect { Tainers::Specification::Bare.new 'Image' => 'foo/image:latest' }.to raise_error(/name is required/)
   end
 
   it 'requires an image' do
-    expect { Tainers::Specification.new 'name' => 'something' }.to raise_error(/Image is required/)
+    expect { Tainers::Specification::Bare.new 'name' => 'something' }.to raise_error(/Image is required/)
   end
 
   context 'for a container' do
@@ -38,7 +38,15 @@ RSpec.describe Tainers::Specification do
     let(:specification_args) { container_args.merge('name' => name) }
 
     subject do
-      Tainers::Specification.new specification_args
+      Tainers::Specification::Bare.new specification_args
+    end
+
+    it 'has a name' do
+      expect(subject.name).to equal(name)
+    end
+
+    it 'has an image' do
+      expect(subject.image).to equal(image)
     end
 
     context 'that does not exist' do
