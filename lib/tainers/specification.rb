@@ -108,6 +108,7 @@ module Tainers
       delegates :create
       delegates :ensure
       delegates :exists?
+      delegates :image
       delegates :name
     end
 

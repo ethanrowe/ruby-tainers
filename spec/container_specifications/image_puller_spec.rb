@@ -74,6 +74,10 @@ describe Tainers::Specification::ImagePuller do
 
   subject { Tainers::Specification::ImagePuller.new wrapped }
 
+  describe '#image method' do
+    it_behaves_like 'specification delegator', :image
+  end
+
   describe '#name method' do
     it_behaves_like 'specification delegator', :name
   end
