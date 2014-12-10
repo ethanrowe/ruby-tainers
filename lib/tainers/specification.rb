@@ -159,7 +159,7 @@ module Tainers
     end
 
     def self.pull_image name
-      Docker::Image.create(name)
+      Docker::Image.create('fromImage' => name)
     end
 
     def self.get_by_name name

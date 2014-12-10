@@ -39,7 +39,7 @@ shared_examples_for 'pulling delegator' do |method|
       let(:api_image) { double }
 
       before do
-        expect(Docker::Image).to receive(:create).with(image).and_return(api_image)
+        expect(Docker::Image).to receive(:create).with('fromImage' => image).and_return(api_image)
       end
 
       it_behaves_like 'specification delegator', method
@@ -49,7 +49,7 @@ shared_examples_for 'pulling delegator' do |method|
       before do
         # Just a general exception on this rather than a specific type;
         # the docker-api gem doesn't give a pretty exception here.
-        expect(Docker::Image).to receive(:create).with(image).and_raise("Pull failed!")
+        expect(Docker::Image).to receive(:create).with('fromImage' => image).and_raise("Pull failed!")
         expect(wrapped).to receive(method.to_sym).never
       end
 
