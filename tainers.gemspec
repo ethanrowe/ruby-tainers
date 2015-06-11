@@ -11,10 +11,10 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
 
   s.files       = Dir.glob('lib/**/*.rb') + Dir.glob('spec/**/*.rb') + Dir.glob('bin/*') + Dir.glob('Gemfile*')
-  
+
   s.executables << 'tainers'
 
-  s.add_dependency('docker-api', '~> 1.15.0')
+  s.add_dependency('docker-api', '~> 1.21.4')
 
   s.add_development_dependency('bundler', '~> 1.7.6')
   s.add_development_dependency('rspec', '~> 3.1.0')
