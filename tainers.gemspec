@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.executables << 'tainers'
 
-  s.add_dependency('docker-api', '~> 1.21.4')
+  s.add_dependency('docker-api', '>= 1.21.4')
 
   s.add_development_dependency('bundler', '~> 1.7.6')
   s.add_development_dependency('rspec', '~> 3.1.0')
