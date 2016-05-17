@@ -1,9 +1,9 @@
 Gem::Specification.new do |s|
   s.name        = 'tainers'
-  s.version     = '0.2.0.pre'
+  s.version     = '0.3.0'
   s.email       = 'ethan@the-rowes.com'
   s.author      = 'Ethan Rowe'
-  s.date        = '2014-11-19'
+  s.date        = '2016-05-17'
   s.platform    = Gem::Platform::RUBY
   s.description = 'Config-driven management of docker containers'
   s.summary     = 'Manage docker containers based on deterministic naming derived from container configuration'

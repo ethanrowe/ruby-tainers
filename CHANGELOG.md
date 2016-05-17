@@ -1,3 +1,8 @@
+### 0.3.0
+
+* changed dependency on docker-api to be >= 1.21.4, to work better with modern
+  dockers.
+
 ### 0.2.0.pre
 
 * changed dependency on docker-api gem to get to 1.2+; this is intended to allow
